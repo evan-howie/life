@@ -7,10 +7,26 @@
 class Grid {
 private:
     unsigned char *cells_;
+    unsigned char *temp_;
     unsigned int w_;
     unsigned int h_;
     unsigned int length_;
 
+    /**
+     * Sets the cell at position
+     * 
+     * @param x: x position of cell
+     * @param y: y position of cell
+    */
+    void set_cell_(unsigned int x, unsigned int y);
+
+    /**
+     * clears the cell at position
+     * 
+     * @param x: x position of cell
+     * @param y: y position of cell
+    */
+    void clear_cell_(unsigned int x, unsigned int y);
 public:
     /**
      * Constructor
@@ -76,4 +92,9 @@ public:
      * Initializes grid cells to random values
     */
     void init_rand();
+
+    /**
+     * Moves the grid to the next iteration of life
+    */
+    void step();
 };
