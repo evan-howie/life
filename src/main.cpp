@@ -2,27 +2,36 @@
 #include "../include/grid.h"
 
 #define PROGRAM_NAME "Life"
-#define CELL_SIZE 15
-#define CELL_SIZE_VEC sf::Vector2f{CELL_SIZE, CELL_SIZE}
 
 #define WHITE sf::Color::White
 #define BLACK sf::Color::Black
 #define GRAY sf::Color{160, 160, 160}
 
-void life();
-void draw_grid(sf::RenderWindow &window, Grid &grid);
-int main();
+/**
+ * Initialize the game of life
+ * 
+ * @param gw: width of the grid in cells
+ * @param gh: height of the grid in cells
+ * @param cell_size: 2d vector of the cell dimensions
+ * @param delay: delay in ms between game ticks
+*/
+void life(unsigned int gw, unsigned int gh, sf::Vector2f cell_size, unsigned int delay);
 
-void life(){
-    unsigned int gw = 100;
-    unsigned int gh = 100;
+/**
+ * Draw the grid on a specified window
+ * 
+ * @param window: window you would like to render on
+ * @param grid: the game grid
+ * @param cell_size: 2d vector of the cell dimensions
+*/
+void draw_grid(sf::RenderWindow &window, Grid &grid, sf::Vector2f &cell_size);
 
+void life(unsigned int gw, unsigned int gh, sf::Vector2f cell_size, unsigned int delay){
     Grid grid{gw, gh};
     grid.init_rand();
 
-    sf::RenderWindow window{sf::VideoMode{CELL_SIZE * gw, CELL_SIZE * gh}, PROGRAM_NAME};
+    sf::RenderWindow window{sf::VideoMode{(int) cell_size.x * gw, (int) cell_size.y * gh}, PROGRAM_NAME};
     window.setPosition(sf::Vector2i{100, 100});
-    unsigned int delay = 100;
 
     while (window.isOpen()){
         sf::Event event;
@@ -35,21 +44,20 @@ void life(){
         }
 
         window.clear(WHITE);
-        draw_grid(window, grid);
-        // grid.step();
+        draw_grid(window, grid, cell_size);
+        grid.step();
 
         window.display();
         sf::sleep(sf::milliseconds(delay));
-        grid.step();
     }
 }
 
-void draw_grid(sf::RenderWindow &window, Grid &grid){
+void draw_grid(sf::RenderWindow &window, Grid &grid, sf::Vector2f &cell_size){
     int w = grid.get_width();
     int h = grid.get_height();
 
     sf::RectangleShape rect;
-    rect.setSize(CELL_SIZE_VEC);
+    rect.setSize(cell_size);
     rect.setOutlineColor(GRAY);
     rect.setOutlineThickness(1);
 
@@ -60,7 +68,7 @@ void draw_grid(sf::RenderWindow &window, Grid &grid){
         bool active{grid.is_active(x, y)};
         sf::Color cell_color = active ? BLACK : WHITE;
 
-        rect.setPosition(x * CELL_SIZE, y * CELL_SIZE);
+        rect.setPosition(x * cell_size.x, y * cell_size.y);
         // rect.setFillColor(sf::Color{255 * grid.get_cell(x, y) >> 1, 255 * grid.get_cell(x, y) >> 1,255 * grid.get_cell(x, y) >> 1 });
         rect.setFillColor(cell_color);
 
@@ -68,7 +76,17 @@ void draw_grid(sf::RenderWindow &window, Grid &grid){
     }
 }
 
+/**
+ * GAME PARAMETERS
+*/
+
+#define GRID_WIDTH 50
+#define GRID_HEIGHT 40
+#define CELL_SIZE sf::Vector2f{15, 15}
+#define DELAY 50
+
+
 int main(){
-    life();
+    life(GRID_WIDTH, GRID_HEIGHT, CELL_SIZE, DELAY);
     return 0;
 }

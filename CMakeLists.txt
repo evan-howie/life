@@ -15,7 +15,7 @@ set_target_properties(grid PROPERTIES
 )
 
 # Include your source files
-add_executable(my_app src/main.cpp)
+add_executable(life src/main.cpp)
 
 # Link SFML libraries
-target_link_libraries(my_app sfml-graphics sfml-audio grid)
+target_link_libraries(life sfml-graphics sfml-audio grid)
