@@ -1,6 +1,8 @@
 #include "../include/grid.h"
 #include <cstring>
 #include <random>
+#include <iostream>
+#include <fstream>
 
 Grid::Grid(unsigned int w, unsigned int h)
         : w_{w}, h_{h} {
@@ -57,7 +59,11 @@ void Grid::clear_cell_(unsigned int x, unsigned int y){
 unsigned int Grid::get_width(){ return w_; }
 unsigned int Grid::get_height(){ return h_; }
 unsigned int Grid::get_length(){ return length_; }
-unsigned char Grid::get_cell(unsigned int x, unsigned int y){ return cells_[x + y * w_]; }
+unsigned char Grid::get_cell(unsigned int x, unsigned int y){ 
+    if (x < 0 || x >= w_) return 0b10000000;
+    if (y < 0 || y >= h_) return 0b10000000;
+    return cells_[x + y * w_];
+}
 bool Grid::is_active(unsigned int x, unsigned int y){ return cells_[x + y * w_] & 1; }
 
 void Grid::toggle(unsigned int x, unsigned int y){
@@ -74,6 +80,17 @@ void Grid::init_rand(){
         unsigned int y = i / w_;
         if (dist(rng)) set_cell_(x, y);
     }
+}
+
+void Grid::init_bitmap(char *path){
+    std::ifstream bitmap_file;
+    bitmap_file.open(path);
+    unsigned char *bitmap = new unsigned char[w_ * h_];
+
+    bitmap_file >> bitmap;
+    std::cout << bitmap << std::endl;
+    bitmap_file.close();
+    delete[] bitmap;
 }
 
 void Grid::step(){

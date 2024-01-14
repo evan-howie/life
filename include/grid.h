@@ -94,6 +94,13 @@ public:
     void init_rand();
 
     /**
+     * Initializes grid cells from a bitmap file
+     * 
+     * @param path: path to bitmap file
+    */
+    void init_bitmap(char* path);
+
+    /**
      * Moves the grid to the next iteration of life
     */
     void step();

@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <algorithm>
 #include "../include/grid.h"
 
 #define PROGRAM_NAME "Life"
@@ -26,9 +27,13 @@ void life(unsigned int gw, unsigned int gh, sf::Vector2f cell_size, unsigned int
 */
 void draw_grid(sf::RenderWindow &window, Grid &grid, sf::Vector2f &cell_size);
 
-void life(unsigned int gw, unsigned int gh, sf::Vector2f cell_size, unsigned int delay){
+void life(unsigned int gw, unsigned int gh, sf::Vector2f cell_size, unsigned int delay, char* bitmap_path){
     Grid grid{gw, gh};
-    grid.init_rand();
+    if (bitmap_path){
+        grid.init_bitmap(bitmap_path);
+    } else {
+        grid.init_rand();
+    }
 
     sf::RenderWindow window{sf::VideoMode{(int) cell_size.x * gw, (int) cell_size.y * gh}, PROGRAM_NAME};
     window.setPosition(sf::Vector2i{100, 100});
@@ -86,7 +91,24 @@ void draw_grid(sf::RenderWindow &window, Grid &grid, sf::Vector2f &cell_size){
 #define DELAY 50
 
 
-int main(){
-    life(GRID_WIDTH, GRID_HEIGHT, CELL_SIZE, DELAY);
+char* get_cmd(char ** begin, char ** end, const std::string & option)
+{
+    char ** itr = std::find(begin, end, option);
+    if (itr != end && ++itr != end)
+    {
+        return *itr;
+    }
+    return nullptr;
+}
+
+bool cmd_exists(char** begin, char** end, const std::string& option)
+{
+    return std::find(begin, end, option) != end;
+}
+
+int main(int argc, char* argv[]){
+    char* bitmap_path = get_cmd(argv, argv + argc, "--bitmap");
+
+    life(GRID_WIDTH, GRID_HEIGHT, CELL_SIZE, DELAY, bitmap_path);
     return 0;
 }
