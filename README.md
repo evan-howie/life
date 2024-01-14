@@ -2,7 +2,7 @@
 
 Efficient implementation of [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) using C++ SFML.
 
-![Glider](images/glider.gif)
+![Glider](assets/glider-gun.mp4)
 
 ## Install dependencies
 ```bash
