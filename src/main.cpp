@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include <algorithm>
 #include "../include/grid.h"
 
@@ -27,10 +28,10 @@ void life(unsigned int gw, unsigned int gh, sf::Vector2f cell_size, unsigned int
 */
 void draw_grid(sf::RenderWindow &window, Grid &grid, sf::Vector2f &cell_size);
 
-void life(unsigned int gw, unsigned int gh, sf::Vector2f cell_size, unsigned int delay, char* bitmap_path){
+void life(unsigned int gw, unsigned int gh, sf::Vector2f cell_size, unsigned int delay, char* map_path){
     Grid grid{gw, gh};
-    if (bitmap_path){
-        grid.init_bitmap(bitmap_path);
+    if (map_path){
+        grid.init_file(map_path);
     } else {
         grid.init_rand();
     }
@@ -107,8 +108,8 @@ bool cmd_exists(char** begin, char** end, const std::string& option)
 }
 
 int main(int argc, char* argv[]){
-    char* bitmap_path = get_cmd(argv, argv + argc, "--bitmap");
+    char* map_path = get_cmd(argv, argv + argc, "--map");
 
-    life(GRID_WIDTH, GRID_HEIGHT, CELL_SIZE, DELAY, bitmap_path);
+    life(GRID_WIDTH, GRID_HEIGHT, CELL_SIZE, DELAY, map_path);
     return 0;
 }

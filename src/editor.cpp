@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <cstring>
 #include <set>
 #include "../include/grid.h"
 
@@ -34,27 +35,37 @@ void draw_grid(sf::RenderWindow &window, Grid &grid, sf::Vector2f cell_size){
 }
 
 int main(int argc, char* argv[]){
-  if (argc != 3){
-    std::cout << "Insufficient arguments." << std::endl;
-    std::cout << "Usage: ./life_editor grid_width grid_height" << std::endl;
-    exit(1);
-  }
-  unsigned int gw{(unsigned int) std::stoi(argv[1])};
-  unsigned int gh{(unsigned int) std::stoi(argv[2])};
+    if (argc != 4){
+        std::cout << "Insufficient arguments." << std::endl;
+        std::cout << "Usage: ./life_editor grid_width grid_height file_name" << std::endl;
+        exit(1);
+    }
+    unsigned int gw{(unsigned int) std::stoi(argv[1])};
+    unsigned int gh{(unsigned int) std::stoi(argv[2])};
+    char output_path[256] = "../maps/";
 
-  Grid grid{gw, gh};
+    size_t availableSize = sizeof(output_path) - strlen(output_path) - 1;
+    if (strlen(argv[3]) <= availableSize) {
+        strcat(output_path, argv[3]);
+    } else {
+        std::cout << "file name is too large" << std::endl;
+        exit(2);
+    }
 
-  sf::RenderWindow window{sf::VideoMode{(int) CELL_SIZE.x * gw, (int) CELL_SIZE.y * gh}, PROGRAM_NAME};
-  window.setFramerateLimit(60);
-  std::pair<int, int> point{};
+    Grid grid{gw, gh};
 
-  std::set<std::pair<int, int>> visited{};
-  while (window.isOpen()){
+    sf::RenderWindow window{sf::VideoMode{(int) CELL_SIZE.x * gw, (int) CELL_SIZE.y * gh}, PROGRAM_NAME};
+    window.setFramerateLimit(60);
+    std::pair<int, int> point{};
+
+    std::set<std::pair<int, int>> visited{};
+    while (window.isOpen()){
         sf::Event event;
         while (window.pollEvent(event)){
             switch (event.type) {
                 case sf::Event::Closed:
                     window.close();
+                    grid.save(output_path);
                     break;
                 case sf::Event::MouseButtonPressed:
                     if (event.mouseButton.button != sf::Mouse::Left) break;

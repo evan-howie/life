@@ -82,15 +82,29 @@ void Grid::init_rand(){
     }
 }
 
-void Grid::init_bitmap(char *path){
-    std::ifstream bitmap_file;
-    bitmap_file.open(path);
-    unsigned char *bitmap = new unsigned char[w_ * h_];
+void Grid::init_file(char *path){
+    std::ifstream file(path, std::ios::binary);
+    if (!file) {
+        std::cerr << "Failed to open file: " << path << std::endl;
+        if (errno) { // If errno is set, print the error message
+            std::cerr << "Error: " << strerror(errno) << std::endl;
+        }
+        return;
+    }
+    std::size_t size = sizeof(unsigned char) * length_;
 
-    bitmap_file >> bitmap;
-    std::cout << bitmap << std::endl;
-    bitmap_file.close();
-    delete[] bitmap;
+    // Allocate memory for the array
+    auto* buffer = new unsigned char[size];
+
+    // Read the file into the array
+    if (!file.read(reinterpret_cast<char*>(buffer), size)) {
+        std::cerr << "Error occurred during file read." << std::endl;
+        delete[] buffer;
+        return;
+    }
+
+    memcpy(cells_, buffer, size);
+    file.close();
 }
 
 void Grid::step(){
@@ -110,4 +124,17 @@ void Grid::step(){
         }
         else if (count == 3) set_cell_(x, y);
     }
+}
+
+void Grid::save(char* path){
+    std::ofstream file{path, std::ios::binary};
+    if (!file) {
+        std::cerr << "Failed to open file: " << path << std::endl;
+        if (errno) { // If errno is set, print the error message
+            std::cerr << "Error: " << strerror(errno) << std::endl;
+        }
+        return;
+    }
+    file.write(reinterpret_cast<const char*>(cells_), sizeof(unsigned char) * length_);
+    file.close();
 }
