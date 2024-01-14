@@ -55,6 +55,7 @@ int main(int argc, char* argv[]){
     Grid grid{gw, gh};
 
     sf::RenderWindow window{sf::VideoMode{(int) CELL_SIZE.x * gw, (int) CELL_SIZE.y * gh}, PROGRAM_NAME};
+    window.setPosition(sf::Vector2i{100, 100});
     window.setFramerateLimit(60);
     std::pair<int, int> point{};
 

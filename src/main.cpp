@@ -17,7 +17,7 @@
  * @param cell_size: 2d vector of the cell dimensions
  * @param delay: delay in ms between game ticks
 */
-void life(unsigned int gw, unsigned int gh, sf::Vector2f cell_size, unsigned int delay);
+void life(unsigned int gw, unsigned int gh, sf::Vector2f cell_size, unsigned int delay, bool is_playing, char* path);
 
 /**
  * Draw the grid on a specified window
@@ -28,7 +28,7 @@ void life(unsigned int gw, unsigned int gh, sf::Vector2f cell_size, unsigned int
 */
 void draw_grid(sf::RenderWindow &window, Grid &grid, sf::Vector2f &cell_size);
 
-void life(unsigned int gw, unsigned int gh, sf::Vector2f cell_size, unsigned int delay, char* map_path){
+void life(unsigned int gw, unsigned int gh, sf::Vector2f cell_size, unsigned int delay, bool is_playing, char* map_path){
     Grid grid{gw, gh};
     if (map_path){
         grid.init_file(map_path);
@@ -46,12 +46,19 @@ void life(unsigned int gw, unsigned int gh, sf::Vector2f cell_size, unsigned int
                 case sf::Event::Closed:
                     window.close();
                     break;
+                case sf::Event::KeyPressed:
+                    switch (event.key.code) {
+                        case sf::Keyboard::Space:
+                            is_playing = !is_playing;
+                            break;
+                    }
             }
         }
 
         window.clear(WHITE);
         draw_grid(window, grid, cell_size);
-        grid.step();
+        if (is_playing)
+            grid.step();
 
         window.display();
         sf::sleep(sf::milliseconds(delay));
@@ -89,7 +96,8 @@ void draw_grid(sf::RenderWindow &window, Grid &grid, sf::Vector2f &cell_size){
 #define GRID_WIDTH 50
 #define GRID_HEIGHT 40
 #define CELL_SIZE sf::Vector2f{15, 15}
-#define DELAY 50
+#define INITIAL_DELAY 50
+#define INITIAL_IS_PLAYING true
 
 
 char* get_cmd(char ** begin, char ** end, const std::string & option)
@@ -110,6 +118,6 @@ bool cmd_exists(char** begin, char** end, const std::string& option)
 int main(int argc, char* argv[]){
     char* map_path = get_cmd(argv, argv + argc, "--map");
 
-    life(GRID_WIDTH, GRID_HEIGHT, CELL_SIZE, DELAY, map_path);
+    life(GRID_WIDTH, GRID_HEIGHT, CELL_SIZE, INITIAL_DELAY, INITIAL_IS_PLAYING, map_path);
     return 0;
 }
